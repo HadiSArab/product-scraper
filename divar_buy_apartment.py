@@ -66,24 +66,31 @@ def product(i):
     
     return dic
 
-x = []
 
-# url = 'https://api.divar.ir/v8/web-search/tehran/buy-apartment'
-url = 'https://api.divar.ir/v8/web-search/tehran/buy-apartment?has-photo=true&sort=sort_date'
-resp = requests.get(url)
-resp = json.loads(resp.text)
+a = 0
+while True:
+    
+    x = []
 
-for i in range(23):
-    x.append(resp['web_widgets']['post_list'][i]['data']['token'])
+    # url = 'https://api.divar.ir/v8/web-search/tehran/buy-apartment'
+    url = 'https://api.divar.ir/v8/web-search/tehran/buy-apartment?has-photo=true&sort=sort_date'
+    resp = requests.get(url)
+    resp = json.loads(resp.text)
 
-s = 0
-for i in x:
-    print(i)
-    main_dic[s] = product(i)
-    with open ('divar.json','w') as l:
-        json.dump(main_dic,l)
-    s+=1 
-    time.sleep(2)   
+    for i in range(23):
+        x.append(resp['web_widgets']['post_list'][i]['data']['token'])
+
+    s = 0
+    for i in x:
+        print(i)
+        main_dic[(23*a)+s] = product(i)
+        with open ('divar.json','w') as l:
+            json.dump(main_dic,l)
+        s+=1 
+        time.sleep(2)   
+
+    a+=1
+    time.sleep(60)
 
 
 # dic:{city:"",
