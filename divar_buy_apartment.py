@@ -4,6 +4,8 @@ import json,requests
 import time 
 from datetime import datetime
 import os.path
+from unidecode import unidecode
+import pandas as pd
 
 # this is last dictionary to store
 main_dic ={}
@@ -50,11 +52,17 @@ def product(i):
     dic['district'] = temp1[2]
 
 
-    dic['size']     = resp['sections'][list_data_loc]['widgets'][0]['data']['items'][0]['value']
-    dic['year of construction'] = resp['sections'][list_data_loc]['widgets'][0]['data']['items'][1]['value']
-    dic['number of rooms']      = resp['sections'][list_data_loc]['widgets'][0]['data']['items'][2]['value'] 
-    dic['floor']      = resp['sections'][list_data_loc]['widgets'][widgets_len-3]['data']['value'].split(" ")[0]
-
+    dic['size']     = unidecode(resp['sections'][list_data_loc]['widgets'][0]['data']['items'][0]['value'])
+    dic['year of construction'] = unidecode(resp['sections'][list_data_loc]['widgets'][0]['data']['items'][1]['value'])
+    dic['number of rooms']      = unidecode(resp['sections'][list_data_loc]['widgets'][0]['data']['items'][2]['value'])
+    dic['floor']      = unidecode(resp['sections'][list_data_loc]['widgets'][widgets_len-3]['data']['value'].split(" ")[0])
+   
+    if len(resp['sections'][list_data_loc]['widgets'][widgets_len-3]['data']['value'].split(" ")) == 3:
+        dic['Total floors']      = unidecode(resp['sections'][list_data_loc]['widgets'][widgets_len-3]['data']['value'].split(" ")[2])
+    else:
+        dic['Total floors'] = "NA"
+    
+    
     if 'available' in resp['sections'][list_data_loc]['widgets'][widgets_len-1]['data']['items'][0].keys():
         dic['elevator'] = 'yes'
     else:
@@ -73,8 +81,8 @@ def product(i):
         dic['storage'] = 'no'
 
     dic['date'] = str(current_date)
-    dic['price per meter']      = resp['sections'][list_data_loc]['widgets'][2]['data']['value']
-    dic['total price']      = resp['sections'][list_data_loc]['widgets'][1]['data']['value']
+    dic['price per meter (Toman)']      = unidecode(resp['sections'][list_data_loc]['widgets'][2]['data']['value'].split(" ")[0])
+    dic['total price (Toman)']      = unidecode(resp['sections'][list_data_loc]['widgets'][1]['data']['value'].split(" ")[0])
 
     
     
@@ -105,6 +113,11 @@ while True:
             json.dump(main_dic,l)
         a+=1 
         print(a)
+        
+        df = pd.DataFrame.from_dict(main_dic)
+        df = df.T
+        df.to_csv('D:\Projects\PYTHON\electrical-product-scraper\divar.csv')
+
         time.sleep(2)   
 
     
