@@ -121,7 +121,7 @@ while True:
         time.sleep(2)   
 
     
-    time.sleep(60)
+    time.sleep(120)
 
 
 # dic:{city:"",
